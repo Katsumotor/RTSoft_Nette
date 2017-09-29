@@ -21,7 +21,7 @@ public function __construct(FormProjectManger $formProjectManger, DotazyProjects
   
        protected function createComponentZadaniProjektu() {
         $form = new Form;
-        $form->addText('nazevProjektu', 'Zadejte nazev projektu  ')
+        $form->addText('nazevProjektu', 'Zadejte nazev projektu prosím ')
               ->setRequired('Prosím vyplňte název projektu  ');
         $form->addText('datumOdevzdaniProjektu','Zadejte datum odevzdání projektu ve formátu d.m.y ')
               ->setRequired('Prosím vyplňte daturm projektu')
