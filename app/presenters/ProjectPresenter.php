@@ -3,81 +3,69 @@
 namespace App\Presenters;
 
 use Nette;
-
 use Nette\Application\UI\Form;
-use App\Model\Project\FormProjectManger;
-use App\Model\OperationWithDatabase\DotazyProjects;
 
 class ProjectPresenter extends Nette\Application\UI\Presenter {
-    
-    private $formProjectManger;
-    private $operaceDBProject;
-    
-public function __construct(FormProjectManger $formProjectManger, DotazyProjects $operaceDBProject) {
+
+    private $queryProjects;
+
+    /**
+     * 
+     * @var \App\Forms\IProjectFormFactory @inject
+     */
+    public $IprojectForm;
+    public $parameter;
+
+    public function __construct(\App\Model\QueryProjects $queryProjects ) {
         parent::__construct();
-        $this->formProjectManger =$formProjectManger;
-        $this->operaceDBProject = $operaceDBProject;
+        $this->queryProjects = $queryProjects;
     }
-  
-       protected function createComponentZadaniProjektu() {
-        $form = new Form;
-        $form->addText('nazevProjektu', 'Zadejte nazev projektu prosím ')
-              ->setRequired('Prosím vyplňte název projektu  ');
-        $form->addText('datumOdevzdaniProjektu','Zadejte datum odevzdání projektu ve formátu d.m.y ')
-              ->setRequired('Prosím vyplňte daturm projektu')
-              ->addRule($form::PATTERN,'Datum musí být ve formátu d.m.Y','(0?[1-9]|[12][0-9]|3[01]).(0?[1-9]|1[012]).((19|20)\\d\\d)');
-       $form->addSelect('typprojektu', 'Typ projektu', $this->formProjectManger->getTypProjektu())
-               ->setPrompt("Vyberte polozku")
-               ->addRule($form::FILLED, "Prosím vyberte typ projektu");
-       
-       $form->addCheckbox('webovyprojekt','webovy projekt');
 
-       
-       $form->addSubmit('vlozProjekt','Vlozit projekt');
-       $form->onSuccess[] = [$this,'kontrolaZadaniProjektu'];
-       return $form;
-       
-    }  
-    
-public function renderDefault(){
-    $this->template->projects = $this->operaceDBProject->VypisProjekty();
-}
+    protected function createComponentProjectForm() {
+        $control = $this->IprojectForm->create();
+        $control->onProjectForm[] = function (\App\Forms\ProjectForm $projectForm, $values) {
+            if (!$this->parameter) {
+                $this->queryProjects->insertProjectIntoDB($values);
+                $this->flashMessage("Váš projekt byl úspěšně vložen", 'sucess');
+                $this->redirect('Project:');
+            } else {
+                $row = $this->queryProjects->editProjectById($this->parameter, $values);
+                if ($row) {
+                    $this->flashMessage("Project byl úspěčně upraven", 'sucess');
+                } else {
+                    $this->flashMessage("Tento projekt neexistuje", 'error  ');
+                }
+                $this->redirect('Project:');
+            }
+        };
+        if ($this->parameter) {
+            $row = $this->queryProjects->getProjectById($this->parameter);
+            if ($row) {
+                $control->actionEditovatProject($row);
+            } else {
+                $this->flashMessage('Tento projekt neexistuje', 'sucess');
+                $this->redirect('Project:');
+            }
+        }
+        return $control;
+    }
 
-public function kontrolaZadaniProjektu($form,$values){
-    $parametr = $this->getParameter('id');
-    
-if(!$parametr){ 
-    $this->operaceDBProject->vlozHodnotyDoDB($values);
-    $this->flashMessage("Váš projekt byl úspěšně vložen",'sucess');
-    $this->redirect('Project:');
-}else{
- 
-    $this->operaceDBProject->upravProjectPodleId($parametr, $values);
-    $this->flashMessage("Project byl úspěčně upraven",'sucess');
-    $this->redirect('Project:');
-}
-}
+    public function renderDefault() {
+        $this->template->projects = $this->queryProjects->getAllProjects();
+    }
 
-public function actionEditovatProject($id){
-    $row = $this->operaceDBProject->vratProjectPodleId($id);
-    $this['zadaniProjektu']->setDefaults([
-                'nazevProjektu'=>$row->NazevProjektu,
-        'datumOdevzdaniProjektu'=>$row->DatumOdevzdaniProjektu,
-        'typprojektu'=>$row->TypProjektu,
-        'webovyprojekt'=>$row->WebovyProjekt,
-    ]);
-}
+    public function actionSmazatProject($id) {
+        $row = $this->queryProjects->deleteProjectPodleId($id);
+        if ($row) {
+            $this->flashMessage("Project byl úspěčně smazan", 'sucess');
+        } else {
+            $this->flashMessage("Project nebyl úspěčně smazan", 'error');
+        }
+        $this->redirect('Project:');
+    }
 
-public function actionSmazatProject($id){   
-    $row = $this->operaceDBProject->deleteProjectPodleId($id);
-if($row){
-     $this->flashMessage("Project byl úspěčně smazan",'sucess');
-    $this->redirect('Project:');
-}else{
-  $this->flashMessage("Project nebyl úspěčně smazan",'error');
-    $this->redirect('Project:');   
-}   
-
-}
+    public function actionEditProject($id) {
+        $this->parameter = $id;
+    }
 
 }

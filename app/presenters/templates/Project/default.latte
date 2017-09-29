@@ -26,8 +26,10 @@
                 {else}
                     <td>ne</td>    
                 {/if}
-                <td><a class="btn btn-info" n:href="Project:editovatProject $project->id">Editovat</td> 
-                <td><a class="btn btn-danger" n:href="Project:smazatProject $project->id">Smazat</td>  
+               
+              <td><a class="btn btn-info" n:href="Project:editProject $project->id">Editovat</td> 
+            <td><a class="btn btn-danger" n:href="Project:smazatProject $project->id">Smazat</td>  
+              
             </tr>
         {/foreach}
     </tbody>

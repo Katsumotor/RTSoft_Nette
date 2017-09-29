@@ -25,5 +25,6 @@ database:
 
 services:
         - App\Model\Project\FormProjectManger
-        - App\Model\OperationWithDatabase\DotazyProjects
+        - App\Model\QueryProjects
+        - App\Forms\IProjectFormFactory
         router: App\RouterFactory::createRouter
