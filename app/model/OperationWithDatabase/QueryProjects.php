@@ -9,6 +9,7 @@ class QueryProjects extends connectionDB {
 
     public function getAllProjects() {
         $rows = $this->getDatabase()->table('project')->order('DatumOdevzdaniProjektu ASC')->fetchAll();
+        /**SELECT * FROM project,persononproject,person WHERE project.id = persononproject.id_project AND persononproject.id_person=person.id_person*/
         return $rows;
     }
 
