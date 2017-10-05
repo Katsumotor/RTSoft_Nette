@@ -1,4 +1,5 @@
 {* Latte template *}
 
 {block content}
+<div n:foreach="$flashes as $flash" n:class="flash, $flash->type">{$flash->message}</div>
 {control projectForm}

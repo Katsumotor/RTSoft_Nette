@@ -16,8 +16,8 @@ session:
 
 
 database:
-	dsn: 'mysql:host=127.0.0.1;dbname=project'
-	user: 'root'
+	dsn: ''
+	user: ''
 	password: ''
 	options:
 		lazy: yes
@@ -27,4 +27,8 @@ services:
         - App\Model\Project\FormProjectManger
         - App\Model\QueryProjects
         - App\Forms\IProjectFormFactory
+        - App\Model\Validator
         router: App\RouterFactory::createRouter
+
+extensions:
+        Replicator: Kdyby\Replicator\DI\ReplicatorExtension
