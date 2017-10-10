@@ -1,13 +1,13 @@
 <?php
+
 namespace App\Forms;
+
 use Nette;
 
-interface IProjectFormFactory{
+interface IProjectFormFactory {
+
     /**
      * @return \App\Forms\ProjectForm
      */
     function create();
-    
 }
-
-

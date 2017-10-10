@@ -22,19 +22,19 @@ class ProjectPresenter extends Nette\Application\UI\Presenter {
 
     protected function createComponentProjectForm() {
         $control = $this->IprojectForm->create();
-        $control->id= $this->getParameter('id');
+        $control->id = $this->getParameter('id');
         $control->onProjectForm[] = function (\App\Forms\ProjectForm $projectForm, $values) {
             if (!$this->parameter) {
                 $this->queryProjects->insertProjectIntoDB($values);
                 $this->flashMessage("Váš projekt byl úspěšně vložen", 'sucess');
                 $this->redirect('Project:');
             } else {
-                   
+
                 $row = $this->queryProjects->editProject($this->parameter, $values);
                 if ($row) {
-                    $this->flashMessage("Project byl úspěčně upraven", 'sucess');
+                    $this->flashMessage("Projekt byl úspěšně upraven", 'sucess');
                 } else {
-                    $this->flashMessage("Tento projekt neexistuje", 'error  ');
+                    $this->flashMessage("Projekt neexistuje", 'error  ');
                 }
                 $this->redirect('Project:');
             }
@@ -50,13 +50,15 @@ class ProjectPresenter extends Nette\Application\UI\Presenter {
     public function actionSmazatProject($id) {
         $row = $this->queryProjects->deleteProjectPodleId($id);
         if ($row) {
-            $this->flashMessage("Project byl úspěčně smazan", 'sucess');
+            $this->flashMessage("Project byl úspěšně smazan", 'sucess');
         } else {
-            $this->flashMessage("Project nebyl úspěčně smazan", 'error');
+            $this->flashMessage("Project nebyl smazán", 'error');
         }
         $this->redirect('Project:');
     }
-      public function actionEditProject($id) {
+
+    public function actionEditProject($id) {
         $this->parameter = $id;
     }
+
 }
