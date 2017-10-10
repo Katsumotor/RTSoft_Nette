@@ -8,7 +8,7 @@ class Validator {
 
     const ISALREADYSELECTPERSON = 'App\Model\Validator::isAlreadySelectPerson';
 
-    public static function isAlreadySelectPerson(\Nette\Forms\IControl $control, $values) {
+    public static function isAlreadySelectPerson(\Nette\Forms\IControl $control, Nette\Utils\ArrayHash $values) {
         $pole = [];
         foreach ($values as $key => $value) {
             foreach ($value as $key => $idPerson) {

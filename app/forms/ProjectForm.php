@@ -40,7 +40,7 @@ class ProjectForm extends Nette\Application\UI\Control {
             $user->addSelect('name', 'Zadejte účastníka na projektu', $this->queryProjects->getAllPerson())
                     ->setPrompt("")
                     ->setRequired()
-                    ->addRule(\App\Model\Validator::ISALREADYSELECTPERSON,'Tento pracovník je jíž v seznamu',$this['projectForm']['users']->getValues());
+                    ->addRule(\App\Model\Validator::ISALREADYSELECTPERSON, 'Tento pracovník je jíž v seznamu', $this['projectForm']['users']->getValues());
             $user->addSubmit('remove', 'Odebrat pracovníka')
                     ->addRemoveOnClick();
         }, 0);
@@ -52,39 +52,38 @@ class ProjectForm extends Nette\Application\UI\Control {
         return $form;
     }
 
-    public function checkProjectForm($form, $values) {
+    public function checkProjectForm(Nette\Application\UI\Form $form, \Nette\Utils\ArrayHash $values) {
         $this->onProjectForm($this, $values);
     }
 
     public function loadDataIntoForm() {
         $row = $this->queryProjects->getProjectById($this->id);
-       if($row){
-        $form = $this['projectForm'];
-        if (!$form->isSubmitted()) {
-            $form->setValues([
-                'nazevProjektu' => $row->NazevProjektu,
-                'datumOdevzdaniProjektu' => Nette\Utils\DateTime::From($row->DatumOdevzdaniProjektu)->format('d.m.Y'),
-                'typprojektu' => $row->TypProjektu,
-                'webovyprojekt' => $row->WebovyProjekt
-            ]);
-            foreach ($row->related('persononproject') as $person) {
-                $form['users'][$person->id_person]->setValues(['name' => $person->id_person]);
+        if ($row) {
+            $form = $this['projectForm'];
+            if (!$form->isSubmitted()) {
+                $form->setValues([
+                    'nazevProjektu' => $row->NazevProjektu,
+                    'datumOdevzdaniProjektu' => Nette\Utils\DateTime::From($row->DatumOdevzdaniProjektu)->format('d.m.Y'),
+                    'typprojektu' => $row->TypProjektu,
+                    'webovyprojekt' => $row->WebovyProjekt
+                ]);
+                foreach ($row->related('persononproject') as $person) {
+                    $form['users'][$person->id_person]->setValues(['name' => $person->id_person]);
+                }
             }
+            return true;
         }
-        return true;
-       }
-       return false;
+        return false;
     }
 
     public function render() {
         if ($this->id != null) {
-            if($this->loadDataIntoForm()){
-              $this['projectForm']->render();   
-            }       
-        }else{
-               $this['projectForm']->render();   
+            if ($this->loadDataIntoForm()) {
+                $this['projectForm']->render();
+            }
+        } else {
+            $this['projectForm']->render();
         }
-   
     }
 
 }

@@ -22,19 +22,19 @@ class ProjectPresenter extends Nette\Application\UI\Presenter {
 
     protected function createComponentProjectForm() {
         $control = $this->IprojectForm->create();
-        $control->id= $this->getParameter('id');
+        $control->id = $this->getParameter('id');
         $control->onProjectForm[] = function (\App\Forms\ProjectForm $projectForm, $values) {
             if (!$this->parameter) {
                 $this->queryProjects->insertProjectIntoDB($values);
                 $this->flashMessage("Váš projekt byl úspěšně vložen", 'sucess');
                 $this->redirect('Project:');
             } else {
-                   
+
                 $row = $this->queryProjects->editProject($this->parameter, $values);
                 if ($row) {
                     $this->flashMessage("Project byl úspěčně upraven", 'sucess');
                 } else {
-                    $this->flashMessage("Tento projekt neexistuje", 'error  ');
+                    $this->flashMessage("Projekt neexistuje upraven", 'error  ');
                 }
                 $this->redirect('Project:');
             }
@@ -56,7 +56,9 @@ class ProjectPresenter extends Nette\Application\UI\Presenter {
         }
         $this->redirect('Project:');
     }
-      public function actionEditProject($id) {
+
+    public function actionEditProject($id) {
         $this->parameter = $id;
     }
+
 }
