@@ -16,9 +16,9 @@ session:
 
 
 database:
-	dsn: ''
-	user: ''
-	password: ''
+	dsn: 
+	user: 
+	password: 
 	options:
 		lazy: yes
 
